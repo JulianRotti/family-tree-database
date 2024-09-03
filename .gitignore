@@ -1,5 +1,4 @@
 # Ignore database dump files
-*.sql
 *.sql.gz
 *.bak
 *.backup
@@ -18,7 +17,6 @@ mysql.err
 
 # Ignore specific initialization scripts
 initdb.d/
-schema.sql
 data.sql
 
 # Ignore generated or temporary files
