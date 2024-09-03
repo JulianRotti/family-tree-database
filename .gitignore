@@ -1,0 +1,31 @@
+# Ignore database dump files
+*.sql
+*.sql.gz
+*.bak
+*.backup
+
+# Ignore MySQL logs
+mysql.log
+mysql.err
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore configuration files that might contain sensitive information
+*.cnf
+*.ini
+
+# Ignore specific initialization scripts
+initdb.d/
+schema.sql
+data.sql
+
+# Ignore generated or temporary files
+*.tmp
+*.swp
+*.swo
+
+# Ignore directories used for backup or temp data
+backup/
+tmp/
