@@ -15,7 +15,12 @@ INSERT INTO members (
     (5, 'Chantal', 'Horn', NULL, '1988-03-22', NULL),
     (6, 'Ahmed', 'Horn', NULL, '1990-03-25', NULL),
     (7, 'Rosalie', 'Cortez', NULL, '1991-01-26', NULL),
-    (8, 'Sebalda', 'Horn', NULL, '1930-01-01', NULL);
+    (8, 'Sebalda', 'Horn', NULL, '1930-01-01', NULL),
+    (9, 'FirstChildAhmed', 'Horn', NULL, '2000-01-01', NULL),
+    (10, 'SecondChildAhmed', 'Horn', NULL, '2000-01-01', NULL),
+    (11, 'ChildAhmed', 'Cortez', NULL, '2000-01-01', NULL),
+    (12, 'SecWifeAhmed', 'Horn', NULL, '1990-01-01', NULL),
+    (13, 'ThirdWifeAhmed', 'Horn', NULL, '1990-01-01', NULL);
 
 INSERT INTO relationships (
     member_1_id,
@@ -32,4 +37,12 @@ INSERT INTO relationships (
     (4, 2, 'parent'),
     (4, 5, 'parent'),
     (4, 6, 'parent'),
-    (6, 7, 'spouse');
+    (6, 7, 'spouse'),
+    (6, 12, 'spouse'),
+    (6, 13, 'spouse'),
+    (6, 10, 'parent'),
+    (6, 11, 'parent'),
+    (12, 9, 'parent'),
+    (12, 10, 'parent'),
+    (6, 9, 'parent'),
+    (7, 11, 'parent');

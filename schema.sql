@@ -96,11 +96,26 @@ BEGIN
             (r.member_1_id IN (SELECT member_1_id FROM descendants) 
             OR r.member_2_id IN (SELECT member_2_id FROM descendants))
             AND r.relationship = 'spouse'
+    ),
+        -- Now include children of the spouses recursively
+    spouse_descendants AS (
+        SELECT 
+            r.member_1_id AS member_1_id,
+            r.member_2_id AS member_2_id,
+            'parent' AS relationship
+        FROM 
+            relationships r
+        JOIN 
+            spouses s ON s.member_2_id = r.member_1_id
+        WHERE 
+            r.relationship = 'parent'
     )
     -- Insert descendants and spouses into temp_combined
     SELECT * FROM descendants
     UNION ALL
-    SELECT * FROM spouses;
+    SELECT * FROM spouses
+    UNION ALL 
+    SELECT * FROM spouse_descendants;
 
     -- First result set: Return the combined relationships
     SELECT * FROM temp_combined;
