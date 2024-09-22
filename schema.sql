@@ -57,65 +57,63 @@ BEGIN
     WITH RECURSIVE descendants AS (
         -- Base case: Start with the given member
         SELECT 
-            r.member_1_id AS member_1_id,
-            m.id AS member_2_id,
-            'parent' AS relationship
-        FROM 
-            members m
-        JOIN 
-            relationships r ON m.id = r.member_2_id
-        WHERE 
-            r.relationship = 'parent' 
-            AND r.member_1_id = memberId
+            member_1_id, 
+            member_2_id, 
+            relationship 
+        FROM relationships 
+        WHERE member_1_id = memberId AND relationship = 'parent'
         
         UNION ALL
         
         -- Recursive case: Find descendants of the previously found descendants
         SELECT 
-            r.member_1_id AS member_1_id,
-            m.id AS member_2_id,
-            'parent' AS relationship
+            r.member_1_id,
+            r.member_2_id,
+            r.relationship
         FROM 
-            members m
-        JOIN 
-            relationships r ON m.id = r.member_2_id
+            relationships r
         JOIN 
             descendants d ON r.member_1_id = d.member_2_id
         WHERE 
             r.relationship = 'parent'
     ),
+    all_descendants_ids AS (
+        SELECT DISTINCT * FROM (SELECT member_1_id FROM descendants UNION SELECT member_2_id FROM descendants) AS all_descendants_ids_temp
+        ),
     spouses AS (
         -- Find spouses of the members in the descendants CTE
         SELECT 
             r.member_1_id AS member_1_id,
             r.member_2_id AS member_2_id,
-            'spouse' AS relationship
+            r.relationship
         FROM 
             relationships r
         WHERE 
-            (r.member_1_id IN (SELECT member_1_id FROM descendants) 
-            OR r.member_2_id IN (SELECT member_2_id FROM descendants))
+            (r.member_1_id IN (SELECT * FROM all_descendants_ids) 
+            OR r.member_2_id IN (SELECT * FROM all_descendants_ids))
             AND r.relationship = 'spouse'
+    ),
+    all_spouses_ids AS (
+        SELECT DISTINCT * FROM (SELECT member_1_id FROM spouses UNION SELECT member_2_id FROM spouses) AS all_spouses_ids_temp
     ),
         -- Now include children of the spouses recursively
     spouse_descendants AS (
         SELECT 
-            r.member_1_id AS member_1_id,
-            r.member_2_id AS member_2_id,
-            'parent' AS relationship
+            member_1_id,
+            member_2_id,
+            relationship
         FROM 
-            relationships r
-        JOIN 
-            spouses s ON s.member_2_id = r.member_1_id
+            relationships
         WHERE 
-            r.relationship = 'parent'
+            relationship = 'parent' AND member_1_id IN (SELECT * FROM all_spouses_ids)
     )
     -- Insert descendants and spouses into temp_combined
-    SELECT * FROM descendants
-    UNION ALL
-    SELECT * FROM spouses
-    UNION ALL 
-    SELECT * FROM spouse_descendants;
+    SELECT DISTINCT * FROM (
+        SELECT * FROM descendants
+        UNION
+        SELECT * FROM spouses
+        UNION 
+        SELECT * FROM spouse_descendants) AS combined_results_temp;
 
     -- First result set: Return the combined relationships
     SELECT * FROM temp_combined;
