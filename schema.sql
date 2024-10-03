@@ -119,7 +119,7 @@ BEGIN
     SELECT * FROM temp_combined;
 
     SELECT * FROM members
-    WHERE id IN (SELECT member_2_id FROM temp_combined UNION SELECT member_1_id FROM temp_combined);
+    WHERE id IN (SELECT member_2_id FROM temp_combined UNION SELECT member_1_id FROM temp_combined) OR id = memberId;
 
     -- Cleanup: Drop the temporary table
     DROP TABLE IF EXISTS temp_combined;
